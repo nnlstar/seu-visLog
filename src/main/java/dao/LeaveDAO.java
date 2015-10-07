@@ -32,7 +32,7 @@ public class LeaveDAO {
         return list;
     }
 
-    public List<DBObject> getMainDropoffCategories(String  start,String end) throws ParseException{
+    public List<DBObject> getMainDropoffCategories(String  start,String end,final int limit) throws ParseException{
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
         BasicDBObject cond=new BasicDBObject();
         cond.put("$gt",sdf.parse(start));
@@ -40,7 +40,7 @@ public class LeaveDAO {
         BasicDBObject composeCode=new BasicDBObject();
         composeCode.put("date",cond);
         DBCursor cursor = leave.find(composeCode, new BasicDBObject("_id", false))
-                .sort(new BasicDBObject("sum", -1));
+                .sort(new BasicDBObject("sum", -1)).limit(limit);
 
         List<DBObject> list = new ArrayList<>();
         while (cursor.hasNext()) {

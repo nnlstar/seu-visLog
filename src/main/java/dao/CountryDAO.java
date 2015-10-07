@@ -31,7 +31,7 @@ public class CountryDAO {
         return list;
     }
 
-    public List<DBObject> getGeoDistribution(String start,String end) throws ParseException
+    public List<DBObject> getGeoDistribution(String start,String end,int limit) throws ParseException
     {
 
         //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -51,10 +51,12 @@ public class CountryDAO {
         DBObject project = new BasicDBObject("$project", fields);
 
         // $sort
-        DBObject sort = new BasicDBObject("$sort", new BasicDBObject("sum", 1));
+        DBObject sort = new BasicDBObject("$sort", new BasicDBObject("sum", -1));
+
+        DBObject limitObj =new BasicDBObject("$limit",limit);
         //run
         //DBObject out = new BasicDBObject("$out", "tmp_out");
-        List<DBObject> pipeline = Arrays.asList(match, project,sort);
+        List<DBObject> pipeline = Arrays.asList(match, project,sort,limitObj);
 
         //allowDiskUse
         AggregationOptions options = AggregationOptions.builder().allowDiskUse(true).batchSize(10000).build();

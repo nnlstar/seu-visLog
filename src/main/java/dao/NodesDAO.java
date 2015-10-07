@@ -51,11 +51,11 @@ public class NodesDAO {
         return pageList;
     }
 
-    public List<DBObject> getHotPages(String start,String  end) throws ParseException{
+    public List<DBObject> getHotPages(String start,String  end,int limit) throws ParseException{
         SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd");
         BasicDBObject[] arrayCond={
                 new BasicDBObject("date",new BasicDBObject("$gt",sdf.parse(start))),
-                new BasicDBObject("date",new BasicDBObject("$ltegit",sdf.parse(end))),
+                new BasicDBObject("date",new BasicDBObject("$lte",sdf.parse(end))),
 
         };
         BasicDBObject cond=new BasicDBObject();
@@ -73,9 +73,10 @@ public class NodesDAO {
         DBObject group = new BasicDBObject("$group", groupFields);
         // $sort
         DBObject sort = new BasicDBObject("$sort", new BasicDBObject("nums", -1));
+        DBObject limitObj = new BasicDBObject("$limit",limit);
 
         //run
-        List<DBObject> pipeline = Arrays.asList(match,project, group, sort);
+        List<DBObject> pipeline = Arrays.asList(match,project, group, sort,limitObj);
         //allowDiskUse
         AggregationOptions options = AggregationOptions.builder().allowDiskUse(true).batchSize(10000).build();
 
@@ -119,7 +120,7 @@ public class NodesDAO {
         return categoryList;
     }
 
-    public List<DBObject> getHotCategory(String start, String end) throws ParseException{
+    public List<DBObject> getHotCategory(String start, String end,int limit) throws ParseException{
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
         BasicDBObject[] arrayCond={
                 new BasicDBObject("date",new BasicDBObject("$gt",sdf.parse(start))),
@@ -140,8 +141,9 @@ public class NodesDAO {
         DBObject group = new BasicDBObject("$group", groupFields);
         // $sort
         DBObject sort = new BasicDBObject("$sort", new BasicDBObject("nums", -1));
+        DBObject limitObj = new BasicDBObject("$limit",limit);
 ;
-        List<DBObject> pipeline = Arrays.asList(match,project,group, sort);
+        List<DBObject> pipeline = Arrays.asList(match,project,group, sort,limitObj);
         //allowDiskUse
         AggregationOptions options = AggregationOptions.builder().allowDiskUse(true).build();
         Cursor cursor = nodes.aggregate(pipeline, options);

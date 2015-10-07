@@ -36,7 +36,7 @@ public class SourceDAO {
         return jsonArrayBuilder.build();
     }
 
-    public JsonArray getTopSearchEngines(String start, String end) throws ParseException{
+    public JsonArray getTopSearchEngines(String start, String end,int limit) throws ParseException{
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
         BasicDBObject[] arrayCond={
                 new BasicDBObject("date",new BasicDBObject("$gt",sdf.parse(start))),
@@ -51,8 +51,8 @@ public class SourceDAO {
         fields.put("sum", 1);
         DBObject project = new BasicDBObject("$project", fields);
         DBObject sort = new BasicDBObject("$sort", new BasicDBObject("sum", -1));
-
-        List<DBObject> pipeline = Arrays.asList(match, project, sort);
+        DBObject limitObj = new BasicDBObject("$limit",limit);
+        List<DBObject> pipeline = Arrays.asList(match, project, sort,limitObj);
         //allowDiskUse
         AggregationOptions options = AggregationOptions.builder().allowDiskUse(true).batchSize(10000).build();
         Cursor cursor = source.aggregate(pipeline, options);

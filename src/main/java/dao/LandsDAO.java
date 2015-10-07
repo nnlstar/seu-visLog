@@ -32,7 +32,7 @@ public class LandsDAO {
         return list;
     }
 
-    public List<DBObject> getMainLandingCategories(String  start,String end) throws ParseException{
+    public List<DBObject> getMainLandingCategories(String  start,String end,final int limit) throws ParseException{
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
         BasicDBObject cond=new BasicDBObject();
         cond.put("$gt",sdf.parse(start));
@@ -42,7 +42,7 @@ public class LandsDAO {
 
         //QueryBuilder builder = QueryBuilder.start();
         DBCursor cursor = land.find(composeCod, new BasicDBObject("_id", false))
-                .sort(new BasicDBObject("sum", -1));
+                .sort(new BasicDBObject("sum", -1)).limit(limit);
 
         List<DBObject> list = new ArrayList<>();
         while (cursor.hasNext()) {
